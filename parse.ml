@@ -35,3 +35,10 @@ let rec string_of_sexp (sexp : sexp_t) : string =
     | Atom a -> "Atom \"" ^ a ^ "\""
     | Pair (l, r) -> "Pair (" ^ string_of_sexp l ^ ", " ^ string_of_sexp r ^ ")"
     | Error e -> "Error \"" ^ e ^ "\""
+
+let rec check_sexp_has_no_errors (sexp : sexp_t) : bool =
+    match sexp with
+    | Atom a -> true
+    | Pair (l, r) -> check_sexp_has_no_errors l && check_sexp_has_no_errors r
+    | Error _ -> false
+    

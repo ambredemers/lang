@@ -1,8 +1,8 @@
 COMP = ocamlopt
-CARG = -c -w A-4-40-42 -cc clang -ccopt -Ofast
+CARG = -c -w +a-4-6-7-9-27-29-32..42-44-45-48-50-60 -cc clang -ccopt -Ofast
 LARG = unix.cmxa -cc clang -ccopt -Ofast -o
 PROD = main
-OBJS = lex.cmx parse.cmx main.cmx
+OBJS = lex.cmx parse.cmx interpret.cmx main.cmx
 
 all : $(PROD)
 
