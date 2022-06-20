@@ -20,4 +20,4 @@ NIL
 (HELLO (BRAVE NEW) WORLD)
 (HELLO . ((BRAVE . NEW) . WORLD))
 (a (b c d) (e f))
-(a . ((b . (c . (d . NIL))) . (e . (f . NIL))))
+(a . ((b . (c . (d . NIL))) . ((e . (f . NIL)) . NIL)))

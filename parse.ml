@@ -18,17 +18,26 @@ and parse_pair_left (input : token_t list) : sexp_t * token_t list =
     | Dot :: restp ->
         let right, restpp = parse_pair_right restp in
         Pair (left, right), restpp
-    | _ -> Error "parsing error: parse_pair_left _", input
+    | Error _ :: _ -> Error "parsing error: parse_pair_left Error", input
+    | _ -> parse_list input
 and parse_pair_right (input : token_t list) : sexp_t * token_t list =
     let right, rest = parse_sexp input in
     match rest with
     | Rparen :: restp -> right, restp
     | _ -> Error "parsing error: parse_pair_right _", input
+and parse_list (input : token_t list) : sexp_t * token_t list =
+    let left, rest = parse_sexp input in
+    match rest with
+    | Rparen :: restp -> Pair (left, Atom "NIL"), restp
+    | Error _ :: _ -> Error "parsing error: parse_list _", input
+    | x ->
+        let right, restp = parse_list rest in
+        Pair (left, right), restp
 
 let parse (input : token_t list) : sexp_t =
     match parse_sexp input with
     | sexp, [] -> sexp
-    | _ -> Error "parsing error: parse rest was not empty"
+    | _, rest -> Error ("parsing error: parse rest was not empty: " ^ Lex.string_of_token_list rest ^ "\n")
 
 let rec string_of_sexp (sexp : sexp_t) : string =
     match sexp with
@@ -41,4 +50,3 @@ let rec check_sexp_has_no_errors (sexp : sexp_t) : bool =
     | Atom a -> true
     | Pair (l, r) -> check_sexp_has_no_errors l && check_sexp_has_no_errors r
     | Error _ -> false
-    
