@@ -3,3 +3,4 @@
 *.cmi
 *.cma
 main
+.vscode/*
