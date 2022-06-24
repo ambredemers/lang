@@ -10,7 +10,7 @@ type sexp_t =
 let rec parse_sexp (input : token_t list) : sexp_t * token_t list =
     match input with
     | Lexeme l :: rest -> Atom l, rest
-    | Lparen :: Rparen :: rest -> Atom "NIL", rest
+    | Lparen :: Rparen :: rest -> Atom "nil", rest
     | Lparen :: rest -> parse_pair_left rest
     | _ -> Error "parsing error: parse_sexp _", input
 and parse_pair_left (input : token_t list) : sexp_t * token_t list =
@@ -29,7 +29,7 @@ and parse_pair_right (input : token_t list) : sexp_t * token_t list =
 and parse_list (input : token_t list) : sexp_t * token_t list =
     let left, rest = parse_sexp input in
     match rest with
-    | Rparen :: restp -> Pair (left, Atom "NIL"), restp
+    | Rparen :: restp -> Pair (left, Atom "nil"), restp
     | Error _ :: _ -> Error "parsing error: parse_list _", input
     | x ->
         let right, restp = parse_list rest in
