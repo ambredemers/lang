@@ -51,3 +51,9 @@ let rec check_sexp_has_no_errors (sexp : sexp_t) : bool =
     | Atom a -> true
     | Pair (l, r) -> check_sexp_has_no_errors l && check_sexp_has_no_errors r
     | Error _ -> false
+
+let rec pretty_string_of_sexp (sexp : sexp_t) : string =
+    match sexp with
+    | Atom a -> a
+    | Pair (l, r) -> "(" ^ pretty_string_of_sexp l ^ " . " ^ pretty_string_of_sexp r ^ ")"
+    | Error e -> "Error \"" ^ e ^ "\""
