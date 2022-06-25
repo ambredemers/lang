@@ -16,6 +16,11 @@ let rec interpret_sexp (sexp : sexp_t) (env : env_t) : sexp_t =
             | Error e -> Error ("interpret error: interpret_sexp cons arg was an error: \"" ^ e ^ "\"")
             | xep -> interpret_sexp be ((x, xep) :: env)))
     | Pair (Atom "let", _) -> Error "interpret error: interpret_sexp let was malformed"
+    | Pair (Atom "cond", Pair (Pair (l, r), rest)) ->
+        (match interpret_sexp l env with
+        | Atom "true" -> interpret_sexp r env
+        | Atom "false" -> interpret_sexp (Pair (Atom "cond", rest)) env
+        | _ -> Error " interpret error: interpret_sexp cond invalid arg")
     | Pair (Atom "cons", x) ->
         (match interpret_sexp x env with
         | Pair (l, r) -> Pair (interpret_sexp l env, interpret_sexp r env)
