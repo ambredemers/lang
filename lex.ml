@@ -22,7 +22,7 @@ and lex_string_helper (input : string) (start_position : int) (current_position 
         current_position
     else
         match input.[current_position] with
-        | '(' | ')' | ' ' | '\t' | '\n' -> current_position
+        | '(' | ')' | '.' | ' ' | '\t' | '\n' -> current_position
         | _ -> lex_string_helper input start_position (current_position + 1)
 
 let lex (input : string) : token_t list = lex_string input 0

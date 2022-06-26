@@ -43,3 +43,5 @@ nil
 (let x (cond (true . a) (false . b) (false . c)) x)
 (let x a (let y b (cond (true . x) (false . y))))
 (let x a (let y b (cond (false . x) (true . y))))
+(a. nil)
+(nil. a)
