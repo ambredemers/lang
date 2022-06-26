@@ -2,6 +2,13 @@ open Lex
 
 type atom_t = string
 
+(*
+    BNF grammar:
+    <s-exp> ::= <Lexeme> | "()" | "(" <s-exp> <complex>
+    <complex> ::= "." <s-exp> ")" | <list>
+    <list> ::= <s-exp> <list> | ")"
+*)
+
 type sexp_t =
     | Atom of atom_t
     | Pair of sexp_t * sexp_t
@@ -11,27 +18,24 @@ let rec parse_sexp (input : token_t list) : sexp_t * token_t list =
     match input with
     | Lexeme l :: rest -> Atom l, rest
     | Lparen :: Rparen :: rest -> Atom "nil", rest
-    | Lparen :: rest -> parse_pair_left rest
-    | _ -> Error "parsing error: parse_sexp _", input
-and parse_pair_left (input : token_t list) : sexp_t * token_t list =
-    let left, rest = parse_sexp input in
-    match rest with
-    | Dot :: restp ->
-        let right, restpp = parse_pair_right restp in
+    | Lparen :: rest ->
+        let left, restp = parse_sexp rest in
+        let right, restpp = parse_complex restp in
         Pair (left, right), restpp
-    | Error _ :: _ -> Error "parsing error: parse_pair_left Error", input
-    | _ -> parse_list input
-and parse_pair_right (input : token_t list) : sexp_t * token_t list =
-    let right, rest = parse_sexp input in
-    match rest with
-    | Rparen :: restp -> right, restp
-    | _ -> Error "parsing error: parse_pair_right _", input
+    | _ -> Error "parsing error: parse_sexp _", input
+and parse_complex (input : token_t list) : sexp_t * token_t list =
+    match input with
+    | Dot :: rest ->
+        let right, restp = parse_sexp rest in
+        (match restp with
+        | Rparen :: restpp -> right, restpp
+        | _ -> Error "parsing error: parse_complex _", input)
+    | x -> parse_list x
 and parse_list (input : token_t list) : sexp_t * token_t list =
-    let left, rest = parse_sexp input in
-    match rest with
-    | Rparen :: restp -> Pair (left, Atom "nil"), restp
-    | Error _ :: _ -> Error "parsing error: parse_list _", input
+    match input with
+    | Rparen :: rest -> Atom "nil", rest
     | x ->
+        let left, rest = parse_sexp x in
         let right, restp = parse_list rest in
         Pair (left, right), restp
 
