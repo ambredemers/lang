@@ -2,6 +2,8 @@ type token_t =
     | Lparen
     | Rparen
     | Dot
+    | Single_quote
+    | Double_quote
     | Lexeme of string
     | Error of string
 
@@ -13,6 +15,8 @@ let rec lex_string (input : string) (position : int) : token_t list =
         | '(' -> Lparen :: lex_string input (position + 1)
         | ')' -> Rparen :: lex_string input (position + 1)
         | '.' -> Dot :: lex_string input (position + 1)
+        | '\'' -> Single_quote :: lex_string input (position + 1)
+        | '\"' -> Double_quote :: lex_string input (position + 1)
         | ' ' | '\t' | '\n' -> lex_string input (position + 1)
         | _ ->
             let new_position = lex_string_helper input position position in
@@ -22,7 +26,7 @@ and lex_string_helper (input : string) (start_position : int) (current_position 
         current_position
     else
         match input.[current_position] with
-        | '(' | ')' | '.' | ' ' | '\t' | '\n' -> current_position
+        | '(' | ')' | '.' | ' ' | '\'' | '\"' | '\t' | '\n' -> current_position
         | _ -> lex_string_helper input start_position (current_position + 1)
 
 let lex (input : string) : token_t list = lex_string input 0
@@ -32,6 +36,8 @@ let string_of_token (token : token_t) : string =
     | Lparen -> "Lparen"
     | Rparen -> "Rparen"
     | Dot -> "Dot"
+    | Single_quote -> "Single_quote"
+    | Double_quote -> "Double_quote"
     | Lexeme l -> "Lexeme \"" ^ l ^ "\""
     | Error e -> "Error \"" ^ e ^ "\""
 
