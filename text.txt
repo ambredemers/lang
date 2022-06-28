@@ -51,3 +51,5 @@ nil
 '(nil "a")
 ("a" let a "a" a)
 ''(true false nil)
+'(quote . "a")
+''
