@@ -4,17 +4,16 @@ type atom_t =
     | Id of string
     | String of string
 
-(*
-    BNF grammar:
-    <s-exp> ::= "\"" <Lexeme> "\"" | <Lexeme> | "\'" <sexp> | "()" | "(" <s-exp> <complex>
-    <complex> ::= "." <s-exp> ")" | <list>
-    <list> ::= <s-exp> <list> | ")"
-*)
-
 type sexp_t =
     | Atom of atom_t
     | Pair of sexp_t * sexp_t
     | Error of string
+
+(*
+    BNF grammar:
+    <s-exp> ::= "\"" <Lexeme> "\"" | <Lexeme> | "\'" <sexp> | "()" | "(" <s-exp> <list>
+    <list> ::= ")" | "." <s-exp> ")" | <s-exp> <list>
+*)
 
 let rec parse_sexp (input : token_t list) : sexp_t * token_t list =
     match input with
@@ -26,20 +25,17 @@ let rec parse_sexp (input : token_t list) : sexp_t * token_t list =
     | Lparen :: Rparen :: rest -> Atom (Id "nil"), rest
     | Lparen :: rest ->
         let left, restp = parse_sexp rest in
-        let right, restpp = parse_complex restp in
+        let right, restpp = parse_list restp in
         Pair (left, right), restpp
     | _ -> Error "parsing error: parse_sexp _", input
-and parse_complex (input : token_t list) : sexp_t * token_t list =
+and parse_list (input : token_t list) : sexp_t * token_t list =
     match input with
+    | Rparen :: rest -> Atom (Id "nil"), rest
     | Dot :: rest ->
         let right, restp = parse_sexp rest in
         (match restp with
         | Rparen :: restpp -> right, restpp
-        | _ -> Error "parsing error: parse_complex _", input)
-    | x -> parse_list x
-and parse_list (input : token_t list) : sexp_t * token_t list =
-    match input with
-    | Rparen :: rest -> Atom (Id "nil"), rest
+        | _ -> Error "parsing error: parse_list _", input)
     | x ->
         let left, rest = parse_sexp x in
         let right, restp = parse_list rest in
