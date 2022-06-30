@@ -36,6 +36,7 @@ and parse_list (input : token_t list) : sexp_t * token_t list =
         (match restp with
         | Rparen :: restpp -> right, restpp
         | _ -> Error "parsing error: parse_list _", input)
+    | [] -> Error "parsing error: end of input", input
     | x ->
         let left, rest = parse_sexp x in
         let right, restp = parse_list rest in
