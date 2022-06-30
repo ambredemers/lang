@@ -14,7 +14,10 @@ let rec lex_string (input : string) (position : int) : token_t list =
         match input.[position] with
         | '(' -> Lparen :: lex_string input (position + 1)
         | ')' -> Rparen :: lex_string input (position + 1)
-        | '.' -> Dot :: lex_string input (position + 1)
+        | '.' ->
+            (match input.[position + 1] with
+            | '\\' -> Lexeme "lambda" :: lex_string input (position + 2)
+            | _ -> Dot :: lex_string input (position + 1))
         | '\'' -> Single_quote :: lex_string input (position + 1)
         | '\"' -> Double_quote :: lex_string input (position + 1)
         | ' ' | '\t' | '\n' -> lex_string input (position + 1)
