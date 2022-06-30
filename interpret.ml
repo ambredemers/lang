@@ -1,69 +1,91 @@
 open Parse
 
 type env_t = (string * sexp_t) list
-
-let rec interpret_sexp (sexp : sexp_t) (env : env_t) : sexp_t =
-    match sexp with
-    | Atom (Id i) ->
-        (match List.assoc_opt i env with
-        | Some s -> s
-        | None -> Error "interpret error: variable was undefined")
-    | Atom (String s) -> Atom (String s)
-    | Pair (Atom (Id i), x) ->
-        (match i, x with
-        | "true", _ | "false", _ | "nil", _ -> Error "interpret error: true, false, and nil are not functions"
-        | "quote", r -> r
-        | "let", Pair (Atom (Id id), Pair (value, Pair (body, Atom (Id "nil")))) ->
-            (match List.assoc_opt id env with
-            | Some s -> Error "interpret error: interpret_sexp let: variable was already defined"
-            | None ->
-                (match interpret_sexp value ((id, Error "interpret dummy value") :: env) with
-                | Error e -> Error ("interpret error: interpret_sexp cons arg was an error: \"" ^ e ^ "\"")
-                | valuep -> interpret_sexp body ((id, valuep) :: env)))
-        | "let", _ -> Error "interpret error: interpret_sexp let was malformed"
-        | "cond", Pair (Pair (l, r), rest) ->
-            (match interpret_sexp l env with
-            | Atom (Id "true") -> interpret_sexp r env
-            | Atom (Id "false") -> interpret_sexp (Pair (Atom (Id "cond"), rest)) env
-            | _ -> Error " interpret error: interpret_sexp cond invalid arg")
-        | "cond", _ -> Error "interpret error: malformed cond"
-        | "cons", Pair (l, Pair (r, Atom (Id "nil"))) -> Pair (interpret_sexp l env, interpret_sexp r env)
-        | "cons", _ -> Error "interpret error: interpret_sexp cons invalid arg"
-        | "car", Pair (a, Atom (Id "nil")) ->
-            (match interpret_sexp a env with
-            | Pair (l, _) -> interpret_sexp l env
-            | _ -> Error "interpret_error: interpret_sexp car arg was not a pair")
-        | "car", _ -> Error "interpret error: interpret_sexp car invalid arg count"
-        | "cdr", Pair (a, Atom (Id "nil")) ->
-            (match interpret_sexp a env with
-            | Pair (_, r) -> r
-            | _ -> Error "interpret_error: interpret_sexp cdr arg was not a pair")
-        | "cdr", _ -> Error "interpret error: interpret_sexp cdr invalid arg count"
-        | "eq", Pair (a, Pair (b, Atom (Id "nil"))) ->
-            (match interpret_sexp a env, interpret_sexp b env with
-            | Atom l, Atom r -> if l = r then Atom (Id "true") else Atom (Id "false")
-            | _ -> Error "interpret error: interpret_sexp eq invalid args")
-        | "eq", _ -> Error "interpret error: interpret_sexp eq invalid arg count"
-        | "atom", Pair (a, Atom (Id "nil")) ->
-            (match interpret_sexp a env with
-            | Atom _ -> Atom (Id "true")
-            | Pair _ -> Atom (Id "false")
-            | Error e -> Error ("interpret error: interpret_sexp cdr arg was an error: " ^ e ^ ""))
-        | _ -> interpret_sexp (Pair (interpret_sexp (Atom (Id i)) env, x)) env)
-    | Pair _ -> Error "interpret error: interpet_sexp Pair"
-    | Error _ -> Error "interpret error: interpret_sexp Error"
-
 let keywords : env_t =  [
     ("true", Atom (Id "true"));
     ("false", Atom (Id "false"));
     ("nil", Atom (Id "nil"));
-    ("quote", Error "attempted to use quote as a variable");
     ("let", Error "attempted to use let as a variable");
+    ("lambda", Error "attempted to use lambda as a variable");
+    ("label", Error "attempted to use label as a variable");
     ("cons", Error "attempted to use cons as a variable");
     ("car", Error "attempted to use car as a variable");
     ("cdr", Error "attempted to use cdr as a variable");
     ("eq", Error "attempted to use eq as a variable");
     ("atom", Error "attempted to use atom as a variable");
+    ("quote", Error "attempted to use quote as a variable");
+    ("cond", Error "attempted to use cond as a variable");
 ]
 
-let interpret (sexp : sexp_t) : sexp_t = interpret_sexp sexp keywords
+let rec apply (fn : sexp_t) (x : sexp_t) (env : env_t) : sexp_t =
+    match fn with
+    | Atom (Id i) ->
+        (match i, x with
+        | "true", _ | "false", _ | "nil", _ -> Error "interpret error: true, false, and nil are not functions"
+        | "car", Pair (Pair (l, _), Atom (Id "nil")) -> l
+        | "car", _ -> Error "interpret error: apply car invalid arg count"
+        | "cdr", Pair (Pair (_, r), Atom (Id "nil")) -> r
+        | "cdr", _ -> Error "interpret error: apply cdr invalid arg count"
+        | "cons", Pair (l, Pair (r, Atom (Id "nil"))) -> Pair (l, r)
+        | "cons", _ -> Error "interpret error: apply cons invalid arg count"
+        | "atom", Pair (a, Atom (Id "nil")) ->
+            (match a with
+            | Atom _ -> Atom (Id "true")
+            | Pair _ -> Atom (Id "false")
+            | Error e -> Error ("interpret error: apply cdr arg was an error: " ^ e ^ ""))
+        | "atom", _ -> Error "interpret error: apply atom invalid arg count"
+        | "eq", Pair (a, Pair (b, Atom (Id "nil"))) ->
+            (match a, b with
+            | Atom l, Atom r -> if l = r then Atom (Id "true") else Atom (Id "false")
+            | _ -> Error "interpret error: apply eq invalid arg type")
+        | "eq", _ -> Error "interpret error: apply eq invalid arg count"
+        | _ -> apply (eval (Atom (Id i)) env) x env)
+    | Pair (Atom (Id "lambda"), Pair (params, Pair (body, Atom (Id "nil")))) ->
+        (match pairlis params x env with
+        | Some envp -> eval body envp
+        | None -> Error "interpret error: apply lambda envp was None")
+    | Pair (Atom (Id "lambda"), _) -> Error "interpret_error: apply lambda invalid arg count"
+    | Pair (Atom (Id "label"), _) -> Error "not implemented"
+    | _ -> Error "interpret error: apply _"
+and eval (sexp : sexp_t) (env : env_t) : sexp_t =
+    match sexp with
+    | Atom (Id i) ->
+        (match List.assoc_opt i env with
+        | Some (Atom (Id i)) when List.mem_assoc i keywords  -> Atom (Id i)
+        | Some s -> eval s env
+        | None -> Error "interpret error: variable was undefined")
+    | Atom _ -> sexp
+    | Pair (Atom (Id "quote"), x) -> x
+    | Pair (Atom (Id "cond"), x) -> evcon x env
+    | Pair (Atom (Id "let"), x) -> evlet x env
+    | Pair (fn, x) -> apply fn (evlis x env) env
+    | _ -> Error "interpret_sexp: eval _"
+and evcon (sexp : sexp_t) (env : env_t) : sexp_t =
+    match sexp with
+    | Pair (Pair (c, Pair (x, Atom (Id "nil"))), rest) ->
+        (match eval c env with
+        | Atom (Id "true") -> eval x env
+        | Atom (Id "false") -> evcon rest env
+        | _ -> Error "interpret error: evcon condition did not evaluate to true or false")
+    | _ -> Error "interpret error: evcon _"
+and evlet (sexp : sexp_t) (env : env_t) : sexp_t =
+    match sexp with
+    | Pair (Atom (Id id), Pair (value, Pair (body, Atom (Id "nil")))) ->
+        (match List.assoc_opt id env with
+        | Some s -> Error "interpret error: evlet variable was already defined"
+        | None -> eval body ((id, value) :: env))
+    | _ -> Error "interpret error: evlet _"
+and evlis (sexp : sexp_t) (env : env_t) : sexp_t =
+    match sexp with
+    | Atom (Id "nil") -> Atom (Id "nil")
+    | Pair (l, r) -> Pair (eval l env, evlis r env)
+    | _ -> Error "interpret error: evlis _"
+and pairlis (x : sexp_t) (y : sexp_t) (env : env_t) : env_t option =
+    let rec f (xp : sexp_t) (yp : sexp_t) (envp : env_t) : env_t =
+        match xp, yp with
+        | Atom (Id "nil"), Atom (Id "nil") -> envp
+        | Pair (Atom (Id i), restx), Pair (y, resty) -> (i, eval y env) :: f restx resty envp
+        | _ -> raise (Invalid_argument "pairlis _") in
+    try Some (f x y env) with Invalid_argument _ -> None
+
+let interpret (sexp : sexp_t) : sexp_t = eval sexp keywords
