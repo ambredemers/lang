@@ -3,4 +3,5 @@
 *.cmi
 *.cma
 main
+debug2
 .vscode/*
