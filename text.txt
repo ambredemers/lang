@@ -60,3 +60,6 @@ nil
 ((lambda (a) a) "1")
 (let id (lambda (a) a) (id "1"))
 (let cons2 (lambda (a b) (cons a b)) (cons2 "1" "2"))
+(let x '("a" "b" "c") x)
+(let x "a" (let x "b" x))
+(let x (cons "a" x) x)

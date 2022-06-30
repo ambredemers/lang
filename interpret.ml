@@ -51,13 +51,14 @@ and eval (sexp : sexp_t) (env : env_t) : sexp_t =
     match sexp with
     | Atom (Id i) ->
         (match List.assoc_opt i env with
-        | Some (Atom (Id i)) when List.mem_assoc i keywords  -> Atom (Id i)
-        | Some s -> eval s env
+        | Some (Atom (Id i)) when not (List.mem_assoc i keywords) -> eval (Atom (Id i)) env
+        | Some s -> s
         | None -> Error "interpret error: variable was undefined")
     | Atom _ -> sexp
     | Pair (Atom (Id "quote"), x) -> x
     | Pair (Atom (Id "cond"), x) -> evcon x env
     | Pair (Atom (Id "let"), x) -> evlet x env
+    | Pair (Atom (Id "lambda"), _) -> sexp
     | Pair (fn, x) -> apply fn (evlis x env) env
     | _ -> Error "interpret_sexp: eval _"
 and evcon (sexp : sexp_t) (env : env_t) : sexp_t =
@@ -73,7 +74,7 @@ and evlet (sexp : sexp_t) (env : env_t) : sexp_t =
     | Pair (Atom (Id id), Pair (value, Pair (body, Atom (Id "nil")))) ->
         (match List.assoc_opt id env with
         | Some s -> Error "interpret error: evlet variable was already defined"
-        | None -> eval body ((id, value) :: env))
+        | None -> eval body ((id, eval value env) :: env))
     | _ -> Error "interpret error: evlet _"
 and evlis (sexp : sexp_t) (env : env_t) : sexp_t =
     match sexp with
