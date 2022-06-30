@@ -62,12 +62,6 @@ let rec sexp_has_no_errors (sexp : sexp_t) : bool =
     | Pair (l, r) -> sexp_has_no_errors l && sexp_has_no_errors r
     | Error _ -> false
 
-let rec sexp_is_list (sexp : sexp_t) : bool =
-    match sexp with
-    | Atom (Id "nil") -> true
-    | Pair (_, r) -> sexp_is_list r
-    | _ -> false
-
 let rec pretty_string_of_sexp (sexp : sexp_t) : string =
     match sexp with
     | Atom a ->
@@ -75,11 +69,12 @@ let rec pretty_string_of_sexp (sexp : sexp_t) : string =
         | Id i -> i
         | String s -> "\"" ^ s ^ "\"")
     | Pair (Atom (Id "quote"), x) -> "\'" ^ pretty_string_of_sexp x
-    | Pair (l, r) when sexp_is_list sexp -> "(" ^ pretty_string_of_sexp l ^ pretty_string_of_list r
-    | Pair (l, r) -> "(" ^ pretty_string_of_sexp l ^ " . " ^ pretty_string_of_sexp r ^ ")"
+    | Pair (l, Atom (Id "nil")) -> "(" ^ pretty_string_of_sexp l ^ ")"
+    | Pair (l, r) -> "(" ^ pretty_string_of_sexp l ^ pretty_string_of_list r
     | Error e -> "Error \"" ^ e ^ "\""
 and pretty_string_of_list (sexp : sexp_t) : string =
     match sexp with
     | Atom (Id "nil") -> ")"
+    | Atom r -> " . " ^ pretty_string_of_sexp (Atom r) ^ ")"
     | Pair (l, r) -> " " ^ pretty_string_of_sexp l ^ pretty_string_of_list r
     | _ -> raise (Invalid_argument "pretty_string_of_list value was not a list")
