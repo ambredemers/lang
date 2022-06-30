@@ -66,6 +66,7 @@ let rec pretty_string_of_sexp (sexp : sexp_t) : string =
     match sexp with
     | Atom a ->
         (match a with
+        | Id "nil" -> "()"
         | Id i -> i
         | String s -> "\"" ^ s ^ "\"")
     | Pair (Atom (Id "quote"), x) -> "\'" ^ pretty_string_of_sexp x
@@ -75,6 +76,5 @@ let rec pretty_string_of_sexp (sexp : sexp_t) : string =
 and pretty_string_of_list (sexp : sexp_t) : string =
     match sexp with
     | Atom (Id "nil") -> ")"
-    | Atom r -> " . " ^ pretty_string_of_sexp (Atom r) ^ ")"
     | Pair (l, r) -> " " ^ pretty_string_of_sexp l ^ pretty_string_of_list r
-    | _ -> raise (Invalid_argument "pretty_string_of_list value was not a list")
+    | _ -> " . " ^ pretty_string_of_sexp sexp ^ ")"
