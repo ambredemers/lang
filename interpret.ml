@@ -7,7 +7,6 @@ let keywords : env_t =  [
     ("nil", Atom (Id "nil"));
     ("let", Error "attempted to use let as a variable");
     ("lambda", Error "attempted to use lambda as a variable");
-    ("label", Error "attempted to use label as a variable");
     ("cons", Error "attempted to use cons as a variable");
     ("car", Error "attempted to use car as a variable");
     ("cdr", Error "attempted to use cdr as a variable");
@@ -58,10 +57,6 @@ let rec apply (fn : sexp_t) (x : sexp_t) (env : env_t) : sexp_t =
         | None -> Error "interpret error: apply lambda envp was None")
     | Pair (Atom (Id "lambda"), h) ->
         Error ("interpret_error: apply lambda invalid arg count: " ^ pretty_string_of_sexp h)
-    | Pair (Atom (Id "label"), Pair (Atom (Id id), Pair (value, Atom (Id "nil")))) ->
-        apply value  x ((id, value) :: env)
-    | Pair (Atom (Id "label"), h) ->
-        Error ("interpret_error: apply label invalid arg count: " ^ pretty_string_of_sexp h)
     | h -> Error ("interpret error: apply _: " ^ pretty_string_of_sexp h)
 and eval (sexp : sexp_t) (env : env_t) : sexp_t =
     match sexp with
@@ -75,7 +70,6 @@ and eval (sexp : sexp_t) (env : env_t) : sexp_t =
     | Pair (Atom (Id "cond"), x) -> evcon x env
     | Pair (Atom (Id "let"), x) -> evlet x env
     | Pair (Atom (Id "lambda"), _) -> sexp
-    | Pair (Atom (Id "label"), _) -> sexp
     | Pair (fn, x) -> apply fn (evlis x env) env
     | h -> Error ("interpret_sexp: eval _: " ^ pretty_string_of_sexp h)
 and evcon (sexp : sexp_t) (env : env_t) : sexp_t =
