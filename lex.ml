@@ -1,48 +1,65 @@
-type token_t =
-    | Lparen
-    | Rparen
-    | Dot
-    | Single_quote
-    | Double_quote
-    | Lexeme of string
-    | Error of string
+open Token_t
 
-let rec lex_string (input : string) (position : int) : token_t list =
-    if position >= String.length input then
-        []
-    else
-        match input.[position] with
-        | '(' -> Lparen :: lex_string input (position + 1)
-        | ')' -> Rparen :: lex_string input (position + 1)
-        | '.' ->
-            (match input.[position + 1] with
-            | '\\' -> Lexeme "lambda" :: lex_string input (position + 2)
-            | _ -> Dot :: lex_string input (position + 1))
-        | '\'' -> Single_quote :: lex_string input (position + 1)
-        | '\"' -> Double_quote :: lex_string input (position + 1)
-        | ' ' | '\t' | '\n' -> lex_string input (position + 1)
-        | _ ->
-            let new_position = lex_string_helper input position position in
-            Lexeme (String.sub input position (new_position - position)) :: lex_string input new_position
-and lex_string_helper (input : string) (start_position : int) (current_position : int) : int =
+let is_digit (c : char) : bool =
+    Char.compare c '0' >= 0 &&
+    Char.compare c '9' <= 0
+
+let is_alpha (c : char) : bool =
+    Char.compare c 'a' >= 0 &&
+    Char.compare c 'z' <= 0 ||
+    Char.compare c 'A' >= 0 &&
+    Char.compare c 'Z' <= 0
+
+let rec lex_int (input : string) (start_position : int) (current_position : int) : int =
     if current_position >= String.length input then
         current_position
     else
         match input.[current_position] with
-        | '(' | ')' | '.' | ' ' | '\'' | '\"' | '\t' | '\n' -> current_position
-        | _ -> lex_string_helper input start_position (current_position + 1)
+        | c when is_digit c -> lex_int input start_position (current_position + 1)
+        | _ -> current_position
 
-let lex (input : string) : token_t list = lex_string input 0
+let rec lex_id (input : string) (start_position : int) (current_position : int) : int =
+    if current_position >= String.length input then
+        current_position
+    else
+        match input.[current_position] with
+        | c when is_alpha c || is_digit c || c = '_' ->
+            lex_id input start_position (current_position + 1)
+        | _ -> current_position
 
-let string_of_token (token : token_t) : string =
-    match token with
-    | Lparen -> "Lparen"
-    | Rparen -> "Rparen"
-    | Dot -> "Dot"
-    | Single_quote -> "Single_quote"
-    | Double_quote -> "Double_quote"
-    | Lexeme l -> "Lexeme \"" ^ l ^ "\""
-    | Error e -> "Error \"" ^ e ^ "\""
+let rec lex_string (input : string) (start_position : int) (current_position : int) : int =
+    if current_position >= String.length input then
+        current_position
+    else
+        match input.[current_position] with
+        | '\"' -> current_position
+        | _ -> lex_string input start_position (current_position + 1)
 
-let string_of_token_list (tokens : token_t list) : string =
-    "[" ^ List.fold_left (fun a b -> a ^ b ^ "; ") "" (List.map string_of_token tokens) ^ "]"
+let rec lex_token (input : string) (position : int) : token_t list =
+    if position >= String.length input then
+        []
+    else
+        match input.[position] with
+        | '(' -> Lparen :: lex_token input (position + 1)
+        | ')' -> Rparen :: lex_token input (position + 1)
+        | '.' ->
+            (match input.[position + 1] with
+            | '\\' -> Id "lambda" :: lex_token input (position + 2)
+            | _ -> Dot :: lex_token input (position + 1))
+        | '\'' -> Quote :: lex_token input (position + 1)
+        | ' ' | '\t' | '\n' -> lex_token input (position + 1)
+        | c when is_digit c ->
+            let new_position = lex_int input position position in
+            let value = int_of_string (String.sub input position (new_position - position)) in
+            Int value :: lex_token input new_position
+        | c when is_alpha c || c = '_' ->
+            let positionp = position + 1 in
+            let new_position = lex_id input positionp positionp in
+            Id (String.sub input position (new_position - position)) :: lex_token input new_position
+        | '\"' ->
+            let positionp = position + 1 in
+            let new_position = lex_string input positionp positionp in
+            String (String.sub input positionp (new_position - positionp)) :: lex_token input (new_position + 1)
+        | c -> [Error ("Lexing error: lex_token \"" ^ Char.escaped c ^ "\"")]
+
+let lex (input : string) : token_t list = lex_token input 0

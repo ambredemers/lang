@@ -1,4 +1,5 @@
 type atom_t =
+| Int of int
 | Id of string
 | String of string
 
@@ -9,6 +10,7 @@ type sexp_t =
 
 let string_of_atom (atom : atom_t) : string =
   (match atom with
+  | Int i -> "Atom (Int " ^ string_of_int i ^ ")"
   | Id i -> "Atom (Id \"" ^ i ^ "\")"
   | String s -> "Atom (String \"" ^ s ^ "\")")
 let rec string_of_sexp (sexp : sexp_t) : string =
@@ -27,6 +29,7 @@ let rec pretty_string_of_sexp (sexp : sexp_t) : string =
   match sexp with
   | Atom a ->
       (match a with
+      | Int i -> string_of_int i
       | Id "nil" -> "()"
       | Id i -> i
       | String s -> "\"" ^ s ^ "\"")
