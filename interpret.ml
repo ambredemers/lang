@@ -75,6 +75,7 @@ and eval (sexp : sexp_t) (env : env_t) : sexp_t =
     | Pair (Atom (Id "cond"), x) -> evcon x env
     | Pair (Atom (Id "let"), x) -> evlet x env
     | Pair (Atom (Id "lambda"), _) -> sexp
+    | Pair (Atom (Id "label"), _) -> sexp
     | Pair (fn, x) -> apply fn (evlis x env) env
     | h -> Error ("interpret_sexp: eval _: " ^ pretty_string_of_sexp h)
 and evcon (sexp : sexp_t) (env : env_t) : sexp_t =

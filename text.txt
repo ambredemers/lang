@@ -73,3 +73,4 @@ nil
 (let last (.\ (x) (cond ((atom x) x) (true (cdr x)))) (last '("a" "b")))
 (let last (.\ (x) (cond ((atom x) x) (true ((last (cdr x)))))) (last '("a" "b")))
 ((label last (.\ (x) (cond ((atom x) x) (true (last (cdr x)))))) '("a" "b" "c" . "d"))
+(let last (label last (.\ (x) (cond ((atom x) x) (true (last (cdr x)))))) (last '("a" "b" "c" . "d")))
