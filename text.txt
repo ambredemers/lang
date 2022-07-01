@@ -68,3 +68,8 @@ nil
 (let cons2 (.\ (a b) (cons a b)) (cons2 "1" "2"))
 (
 )
+(let x '("a" "b") (cond ((atom x) x) (true (cdr x))))
+((.\ (x) (cond (true (cdr x)))) '("a" "b"))
+(let last (.\ (x) (cond ((atom x) x) (true (cdr x)))) (last '("a" "b")))
+(let last (.\ (x) (cond ((atom x) x) (true ((last (cdr x)))))) (last '("a" "b")))
+((label last (.\ (x) (cond ((atom x) x) (true (last (cdr x)))))) '("a" "b" "c" . "d"))
