@@ -31,6 +31,15 @@ let rec pretty_string_of_sexp (sexp : sexp_t) : string =
       (match a with
       | Int i -> string_of_int i
       | Id "nil" -> "()"
+      | Id "add" -> "+"
+      | Id "sub" -> "-"
+      | Id "mult" -> "*"
+      | Id "div" -> "/"
+      | Id "mod" -> "%"
+      | Id "lt" -> "<"
+      | Id "leq" -> "<="
+      | Id "gt" -> ">"
+      | Id "geq" -> ">="
       | Id i -> i
       | String s -> "\"" ^ s ^ "\"")
   | Pair (Atom (Id "quote"), x) -> "\'" ^ pretty_string_of_sexp x
