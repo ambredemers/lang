@@ -46,6 +46,7 @@ let rec lex_token (input : string) (position : int) : token_t list =
             (match input.[position + 1] with
             | '\\' -> Id "lambda" :: lex_token input (position + 2)
             | _ -> Dot :: lex_token input (position + 1))
+        | '=' -> Id "eq" :: lex_token input (position + 1)
         | '\'' -> Quote :: lex_token input (position + 1)
         | '+' -> Id "add" :: lex_token input (position + 1)
         | '-' when not (is_digit input.[position + 1]) ->
