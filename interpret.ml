@@ -24,8 +24,10 @@ let rec pairlis (x : sexp_t) (y : sexp_t) (env : env_t) : env_t option =
         | _ -> raise (Invalid_argument "pairlis _") in
     try Some (f x y env) with Invalid_argument _ -> None
 
+(* apply a function fn to the arguments x *)
 let rec apply (fn : sexp_t) (x : sexp_t) (env : env_t) : sexp_t =
     match fn with
+    (* built-in functions *)
     | Atom (Id i) ->
         (match i, x with
         | "true", _ | "false", _ | "nil", _ -> Error "interpret error: true, false, and nil are not functions"
@@ -50,7 +52,30 @@ let rec apply (fn : sexp_t) (x : sexp_t) (env : env_t) : sexp_t =
                 ^ pretty_string_of_sexp h1 ^ ", "
                 ^ pretty_string_of_sexp h2))
         | "eq", h -> Error ("interpret error: apply eq invalid arg count: " ^ pretty_string_of_sexp h)
+        | "add", Pair (Atom (Int l), Pair (Atom (Int r), Atom (Id "nil"))) -> Atom (Int (l + r))
+        | "add", h -> Error ("interpret error: apply add invalid arg count" ^ pretty_string_of_sexp h)
+        | "sub", Pair (Atom (Int l), Pair (Atom (Int r), Atom (Id "nil"))) -> Atom (Int (l - r))
+        | "sub", h -> Error ("interpret error: apply sub invalid arg count" ^ pretty_string_of_sexp h)
+        | "mult", Pair (Atom (Int l), Pair (Atom (Int r), Atom (Id "nil"))) -> Atom (Int (l * r))
+        | "mult", h -> Error ("interpret error: apply mult invalid arg count" ^ pretty_string_of_sexp h)
+        | "div", Pair (Atom (Int l), Pair (Atom (Int r), Atom (Id "nil"))) -> Atom (Int (l / r))
+        | "div", h -> Error ("interpret error: apply div invalid arg count" ^ pretty_string_of_sexp h)
+        | "mod", Pair (Atom (Int l), Pair (Atom (Int r), Atom (Id "nil"))) -> Atom (Int (l mod r))
+        | "mod", h -> Error ("interpret error: apply mod invalid arg count" ^ pretty_string_of_sexp h)
+        | "lt", Pair (Atom (Int l), Pair (Atom (Int r), Atom (Id "nil"))) ->
+            if l < r then Atom (Id "true") else Atom (Id "false")
+        | "lt", h -> Error ("interpret error: apply lt invalid arg count" ^ pretty_string_of_sexp h)
+        | "leq", Pair (Atom (Int l), Pair (Atom (Int r), Atom (Id "nil"))) ->
+            if l <= r then Atom (Id "true") else Atom (Id "false")
+        | "leq", h -> Error ("interpret error: apply leq invalid arg count" ^ pretty_string_of_sexp h)
+        | "gt", Pair (Atom (Int l), Pair (Atom (Int r), Atom (Id "nil"))) ->
+            if l > r then Atom (Id "true") else Atom (Id "false")
+        | "gt", h -> Error ("interpret error: apply gt invalid arg count" ^ pretty_string_of_sexp h)
+        | "geq", Pair (Atom (Int l), Pair (Atom (Int r), Atom (Id "nil"))) ->
+            if l >= r then Atom (Id "true") else Atom (Id "false")
+        | "geq", h -> Error ("interpret error: apply geq invalid arg count" ^ pretty_string_of_sexp h)
         | _ -> apply (eval (Atom (Id i)) env) x env)
+    (* user-defined functions *)
     | Pair (Atom (Id "lambda"), Pair (params, Pair (body, Atom (Id "nil")))) ->
         (match pairlis params x env with
         | Some envp -> eval body envp
@@ -58,6 +83,7 @@ let rec apply (fn : sexp_t) (x : sexp_t) (env : env_t) : sexp_t =
     | Pair (Atom (Id "lambda"), h) ->
         Error ("interpret_error: apply lambda invalid arg count: " ^ pretty_string_of_sexp h)
     | h -> Error ("interpret error: apply _: " ^ pretty_string_of_sexp h)
+(* evaluate an expression *)
 and eval (sexp : sexp_t) (env : env_t) : sexp_t =
     match sexp with
     | Atom (Id i) ->
@@ -72,6 +98,7 @@ and eval (sexp : sexp_t) (env : env_t) : sexp_t =
     | Pair (Atom (Id "lambda"), _) -> sexp
     | Pair (fn, x) -> apply fn (evlis x env) env
     | h -> Error ("interpret_sexp: eval _: " ^ pretty_string_of_sexp h)
+(* evaluate a conditional expression *)
 and evcon (sexp : sexp_t) (env : env_t) : sexp_t =
     match sexp with
     | Pair (Pair (c, Pair (x, Atom (Id "nil"))), rest) ->
@@ -80,6 +107,7 @@ and evcon (sexp : sexp_t) (env : env_t) : sexp_t =
         | Atom (Id "false") -> evcon rest env
         | h -> Error ("interpret error: evcon eval c: " ^ pretty_string_of_sexp h))
     | h -> Error ("interpret error: evcon _: " ^ pretty_string_of_sexp h)
+(* evaluate a let expression *)
 and evlet (sexp : sexp_t) (env : env_t) : sexp_t =
     match sexp with
     | Pair (Atom (Id id), Pair (value, Pair (body, Atom (Id "nil")))) ->
@@ -87,6 +115,7 @@ and evlet (sexp : sexp_t) (env : env_t) : sexp_t =
         | Some s -> Error "interpret error: evlet variable was already defined"
         | None -> eval body ((id, eval value env) :: env))
     | h -> Error ("interpret error: evlet _: " ^ pretty_string_of_sexp h)
+(* evaluate a list of arguments to apply a function to *)
 and evlis (sexp : sexp_t) (env : env_t) : sexp_t =
     match sexp with
     | Atom (Id "nil") -> Atom (Id "nil")
