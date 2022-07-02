@@ -47,6 +47,20 @@ let rec lex_token (input : string) (position : int) : token_t list =
             | '\\' -> Id "lambda" :: lex_token input (position + 2)
             | _ -> Dot :: lex_token input (position + 1))
         | '\'' -> Quote :: lex_token input (position + 1)
+        | '+' -> Id "add" :: lex_token input (position + 1)
+        | '-' when not (is_digit input.[position + 1]) ->
+            Id "sub" :: lex_token input (position + 1)
+        | '*' -> Id "mult" :: lex_token input (position + 1)
+        | '/' -> Id "div" :: lex_token input (position + 1)
+        | '%' -> Id "mod" :: lex_token input (position + 1)
+        | '<' ->
+            (match input.[position + 1] with
+            | '=' -> Id "leq" :: lex_token input (position + 2)
+            | _ -> Id "lt" :: lex_token input (position + 1))
+        | '>' ->
+            (match input.[position + 1] with
+            | '=' -> Id "geq" :: lex_token input (position + 2)
+            | _ -> Id "gt" :: lex_token input (position + 1))
         | ' ' | '\t' | '\n' -> lex_token input (position + 1)
         | c when is_digit c || c = '-' ->
             let positionp = position + 1 in
