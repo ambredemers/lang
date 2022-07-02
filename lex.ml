@@ -48,8 +48,9 @@ let rec lex_token (input : string) (position : int) : token_t list =
             | _ -> Dot :: lex_token input (position + 1))
         | '\'' -> Quote :: lex_token input (position + 1)
         | ' ' | '\t' | '\n' -> lex_token input (position + 1)
-        | c when is_digit c ->
-            let new_position = lex_int input position position in
+        | c when is_digit c || c = '-' ->
+            let positionp = position + 1 in
+            let new_position = lex_int input positionp positionp in
             let value = int_of_string (String.sub input position (new_position - position)) in
             Int value :: lex_token input new_position
         | c when is_alpha c || c = '_' ->

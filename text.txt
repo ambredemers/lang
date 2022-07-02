@@ -77,3 +77,4 @@ nil
 (let last (.\ (x) (cond ((atom x) x) (true (last (cdr x))))) (last '("a" . "b")))
 '(1 2 3)
 (car '(1 2 3))
+'(?)

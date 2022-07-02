@@ -30,6 +30,7 @@ and parse_list (input : token_t list) : sexp_t * token_t list =
         | Rparen :: restpp -> right, restpp
         | _ -> Error "parsing error: parse_list _", input)
     | [] -> Error "parsing error: end of input", input
+    | Error h :: rest -> Error ("parsing error: Error \"" ^ h ^ "\""), input
     | x ->
         let left, rest = parse_sexp x in
         let right, restp = parse_list rest in
@@ -40,4 +41,4 @@ let parse (input : token_t list) : sexp_t =
     | sexp, [] -> sexp
     | _, rest ->
         Error ("parsing error: parse rest was not empty: "
-        ^ Token_t.string_of_token_list rest ^ "\n")
+        ^ Token_t.string_of_token_list rest)
