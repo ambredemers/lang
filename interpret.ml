@@ -1,20 +1,6 @@
 open Sexp_t
 
 type env_t = (string * sexp_t) list
-let keywords : env_t =  [
-    ("true", Atom (Id "true"));
-    ("false", Atom (Id "false"));
-    ("nil", Atom (Id "nil"));
-    ("let", Error "attempted to use let as a variable");
-    ("lambda", Error "attempted to use lambda as a variable");
-    ("cons", Error "attempted to use cons as a variable");
-    ("car", Error "attempted to use car as a variable");
-    ("cdr", Error "attempted to use cdr as a variable");
-    ("eq", Error "attempted to use eq as a variable");
-    ("atom", Error "attempted to use atom as a variable");
-    ("quote", Error "attempted to use quote as a variable");
-    ("cond", Error "attempted to use cond as a variable");
-]
 
 let rec pairlis (x : sexp_t) (y : sexp_t) (env : env_t) : env_t option =
     let rec f (xp : sexp_t) (yp : sexp_t) (envp : env_t) : env_t =
@@ -88,7 +74,7 @@ and eval (sexp : sexp_t) (env : env_t) : sexp_t =
     match sexp with
     | Atom (Id i) ->
         (match List.assoc_opt i env with
-        | Some (Atom (Id i)) when not (List.mem_assoc i keywords) -> eval (Atom (Id i)) env
+        | Some (Atom (Id i)) when not (List.mem_assoc i Std.std) -> eval (Atom (Id i)) env
         | Some s -> s
         | None -> Error "interpret error: variable was undefined")
     | Atom _ -> sexp
@@ -122,4 +108,4 @@ and evlis (sexp : sexp_t) (env : env_t) : sexp_t =
     | Pair (l, r) -> Pair (eval l env, evlis r env)
     | h -> Error ("interpret error: evlis _: " ^ pretty_string_of_sexp h)
 
-let interpret (sexp : sexp_t) : sexp_t = eval sexp keywords
+let interpret (sexp : sexp_t) : sexp_t = eval sexp Std.std
