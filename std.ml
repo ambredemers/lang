@@ -35,4 +35,31 @@ let std : (string * Sexp_t.sexp_t) list =  [
             )), Atom (Id "nil"))
         ))
     );
+    ("or",
+        Pair (Atom (Id "lambda"), Pair (
+            Pair (Atom (Id "orl"), Pair (Atom (Id "orr"), Atom (Id "nil"))),
+            Pair (Pair (Atom (Id "cond"), Pair (
+                Pair (
+                    Pair (Atom (Id "eq"), Pair (Atom (Id "orl"), Pair (Atom (Id "true"), Atom (Id "nil")))),
+                    Pair (Atom (Id "true"), Atom (Id "nil"))
+                ),
+                Pair (Pair (
+                    Pair (Atom (Id "eq"), Pair (Atom (Id "orl"), Pair (Atom (Id "false"), Atom (Id "nil")))),
+                    Pair (Pair (
+                        Atom (Id "cond"),
+                        Pair (
+                            Pair (Pair (
+                                Atom (Id "eq"),
+                                Pair (Atom (Id "orr"), Pair (Atom (Id "true"), Atom (Id "nil")))
+                            ), Pair (Atom (Id "true"), Atom (Id "nil"))),
+                            Pair (Pair (Pair (
+                                Atom (Id "eq"),
+                                Pair (Atom (Id "orr"), Pair (Atom (Id "false"), Atom (Id "nil")))
+                            ), Pair (Atom (Id "false"), Atom (Id "nil"))), Atom (Id "nil"))
+                        )
+                    ), Atom (Id "nil"))
+                ), Atom (Id "nil"))
+            )), Atom (Id "nil"))
+        ))
+    );
 ]
