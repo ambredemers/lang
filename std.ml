@@ -62,4 +62,37 @@ let std : (string * Sexp_t.sexp_t) list =  [
             )), Atom (Id "nil"))
         ))
     );
+    ("not",
+        Pair (Atom (Id "lambda"), Pair (Pair (Atom (Id "notx"), Atom (Id "nil")), Pair (Pair (
+            Atom (Id "cond"),
+            Pair (
+                Pair (Pair (
+                    Atom (Id "eq"),
+                    Pair (Atom (Id "notx"), Pair (Atom (Id "true"), Atom (Id "nil")))
+                ), Pair (Atom (Id "false"), Atom (Id "nil"))),
+                Pair (Pair (
+                    Pair (
+                        Atom (Id "eq"),
+                        Pair (Atom (Id "notx"), Pair (Atom (Id "false"), Atom (Id "nil")))
+                    ),
+                    Pair (Atom (Id "true"), Atom (Id "nil"))
+                ), Atom (Id "nil"))
+            )
+        ), Atom (Id "nil"))))
+    );
+    ("neq",
+        Pair (Atom (Id "lambda"), Pair (
+            Pair (Atom (Id "neql"), Pair (Atom (Id "neqr"), Atom (Id "nil"))),
+            Pair (Pair (
+                Atom (Id "not"),
+                Pair (
+                    Pair (Atom (Id "eq"), Pair (
+                        Atom (Id "neql"),
+                        Pair (Atom (Id "neqr"), Atom (Id "nil"))
+                    )),
+                    Atom (Id "nil")
+                )
+            ), Atom (Id "nil"))
+        ))
+    );
 ]
