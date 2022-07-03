@@ -11,4 +11,28 @@ let std : (string * Sexp_t.sexp_t) list =  [
     ("atom", Error "attempted to use atom as a variable");
     ("quote", Error "attempted to use quote as a variable");
     ("cond", Error "attempted to use cond as a variable");
+    ("and",
+        Pair (Atom (Id "lambda"), Pair (
+            Pair (Atom (Id "andl"), Pair (Atom (Id "andr"), Atom (Id "nil"))),
+            Pair (Pair (Atom (Id "cond"), Pair (
+                Pair (
+                    Pair (Atom (Id "eq"), Pair (Atom (Id "andl"), Pair (Atom (Id "true"), Atom (Id "nil")))),
+                    Pair (Pair (Atom (Id "cond"), Pair (
+                        Pair (Pair (
+                            Atom (Id "eq"),
+                            Pair (Atom (Id "andr"), Pair (Atom (Id "true"), Atom (Id "nil")))
+                        ), Pair (Atom (Id "true"), Atom (Id "nil"))),
+                        Pair (Pair (Pair (
+                            Atom (Id "eq"),
+                            Pair (Atom (Id "andr"), Pair (Atom (Id "false"), Atom (Id "nil")))
+                        ), Pair (Atom (Id "false"), Atom (Id "nil"))), Atom (Id "nil"))
+                    )), Atom (Id "nil"))
+                ),
+                Pair (Pair (
+                    Pair (Atom (Id "eq"), Pair (Atom (Id "andl"), Pair (Atom (Id "false"), Atom (Id "nil")))),
+                    Pair (Atom (Id "false"), Atom (Id "nil"))
+                ), Atom (Id "nil"))
+            )), Atom (Id "nil"))
+        ))
+    );
 ]
