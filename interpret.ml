@@ -62,12 +62,12 @@ let rec apply (fn : sexp_t) (x : sexp_t) (env : env_t) : sexp_t =
         | "geq", h -> Error ("interpret error: apply geq invalid arg count" ^ pretty_string_of_sexp h)
         | _ -> apply (eval (Atom (Id i)) env) x env)
     (* user-defined functions *)
-    | Pair (Atom (Id "lambda"), Pair (params, Pair (body, Atom (Id "nil")))) ->
+    | Pair (Atom (Id "fn"), Pair (params, Pair (body, Atom (Id "nil")))) ->
         (match pairlis params x env with
         | Some envp -> eval body envp
-        | None -> Error "interpret error: apply lambda envp was None")
-    | Pair (Atom (Id "lambda"), h) ->
-        Error ("interpret_error: apply lambda invalid arg count: " ^ pretty_string_of_sexp h)
+        | None -> Error "interpret error: apply fn envp was None")
+    | Pair (Atom (Id "fn"), h) ->
+        Error ("interpret_error: apply fn invalid arg count: " ^ pretty_string_of_sexp h)
     | h -> Error ("interpret error: apply _: " ^ pretty_string_of_sexp h)
 (* evaluate an expression *)
 and eval (sexp : sexp_t) (env : env_t) : sexp_t =
@@ -81,7 +81,7 @@ and eval (sexp : sexp_t) (env : env_t) : sexp_t =
     | Pair (Atom (Id "quote"), x) -> x
     | Pair (Atom (Id "cond"), x) -> evcon x env
     | Pair (Atom (Id "let"), x) -> evlet x env
-    | Pair (Atom (Id "lambda"), _) -> sexp
+    | Pair (Atom (Id "fn"), _) -> sexp
     | Pair (fn, x) -> apply fn (evlis x env) env
     | h -> Error ("interpret_sexp: eval _: " ^ pretty_string_of_sexp h)
 (* evaluate a conditional expression *)
