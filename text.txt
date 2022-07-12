@@ -1,198 +1,198 @@
-'("x" . ("y" . ("z" . nil)))
-(cons "x" (cons "y" (cons "z" nil)))
-(cons "x" "y")
-(car (cdr '("x" "y" "z")))
-(car (cdr (cons "x" (cons "y" (cons "z" nil)))))
-'((("x" . "y") . "z") . nil)
-'(("x" . ("y" . "z")) . nil)
-nil
-(cons "a" "b")
-(cons "a" '("b" . "c"))
-(car '("a" . "b"))
-(car "a")
-(cdr '("a" . "b"))
-(cdr "a")
-(eq "a" "b")
-(eq "a" "a")
-(atom '("a" . "b"))
-(atom "a")
-'( "a" . "b" )
-'("a" "b" "c")
-'("a" . ("b" . ("c" . nil)))
-'("HELLO" ("BRAVE" "NEW") "WORLD")
-'("HELLO" . (("BRAVE" . "NEW") . "WORLD"))
-'("a" ("b" "c" "d") ("e" "f"))
-'("a" . (("b" . ("c" . ("d" . nil))) . (("e" . ("f" . nil)) . nil)))
-'()
-'("a" . ())
-'(() . "a")
-'("A" "B" "C")
-'(("A" "B") "C")
-'("A" "B" ("C" "D"))
-'("A")
-'(("A"))
-'("A" ("B" . "C"))
-(let a "b" a)
-(let a '("b" . "c") (cons a a))
-(let a "b" (let c "d" (cons a c)))
-(let a "b")
-(let a "b" c "d")
-(let let a "b")
-(let true "a" true)
-(cond (true "a") (false "b") (false "c"))
-(cond (false "a") (true "b") (false "c"))
-(cond (false "a") (false "b") (true "c"))
-(let x (cond (true "a") (false "b") (false "c")) x)
-(let x "a" (let y "b" (cond (true x) (false y))))
-(let x "a" (let y "b" (cond (false x) (true y))))
-("a". nil)
-(nil. "a")
-'(nil. "a")
-'(nil "a")
-("a" let a "a" a)
-''(true false nil)
-'(quote . "a")
-''
-'(a b c)
-'(a b . c)
-'(a . b)
-(let a "1" (let b a b))
-((fn (a) a) "1")
-(let id (fn (a) a) (id "1"))
-(let cons2 (fn (a b) (cons a b)) (cons2 "1" "2"))
-(let x '("a" "b" "c") x)
-(let x "a" (let x "b" x))
-(let x (cons "a" x) x)
-((fn (a) a) "1")
-(let id (fn (a) a) (id "1"))
-(let cons2 (fn (a b) (cons a b)) (cons2 "1" "2"))
-(
-)
-(let x '("a" "b") (cond ((atom x) x) (true (cdr x))))
-((fn (x) (cond (true (cdr x)))) '("a" "b"))
-(let last (fn (x) (cond ((atom x) x) (true (cdr x)))) (last '("a" "b")))
-(let last (fn (x) (cond ((atom x) x) (true (last (cdr x))))) (last '("a" "b")))
-(let last (fn (x) (cond ((atom x) x) (true (last (cdr x))))) '("a" "b" "c" . "d"))
-(let last (fn (x) (cond ((atom x) x) (true (last (cdr x))))) (last '("a" "b" "c" . "d")))
-(let last (fn (x) (cond ((atom x) x) (true (last (cdr x))))) (last '("a" . "b")))
-'(1 2 3)
-(car '(1 2 3))
-'(?)
-'"basic math"
-(add 1 2)
-(add 200 -100)
-(add 10 4)
-(sub 1 2)
-(sub 200 -100)
-(sub 10 4)
-(mult 1 2)
-(mult 200 -100)
-(mult 10 4)
-(div 1 2)
-(div 200 -100)
-(div 10 4)
-(mod 1 2)
-(mod 200 -100)
-(mod 10 4)
-'"basic math with symbols"
-(+ 1 2)
-(+ 200 -100)
-(+ 10 4)
-(- 1 2)
-(- 200 -100)
-(- 10 4)
-(* 1 2)
-(* 200 -100)
-(* 10 4)
-(/ 1 2)
-(/ 200 -100)
-(/ 10 4)
-'"int comparisons"
-(lt 1 1)
-(lt 1 2)
-(lt 2 1)
-(leq 1 1)
-(leq 1 2)
-(leq 2 1)
-(gt 1 1)
-(gt 1 2)
-(gt 2 1)
-(geq 1 1)
-(geq 1 2)
-(geq 2 1)
-'"int comparisons with symbols"
-(< 1 1)
-(< 1 2)
-(< 2 1)
-(<= 1 1)
-(<= 1 2)
-(<= 2 1)
-(> 1 1)
-(> 1 2)
-(> 2 1)
-(>= 1 1)
-(>= 1 2)
-(>= 2 1)
-'"quoted math / comparison symbols"
-'(+ 0 0)
-'(- 0 0)
-'(* 0 0)
-'(/ 0 0)
-'(< 0 0)
-'(<= 0 0)
-'(> 0 0)
-'(>= 0 0)
-'"fibonacci function finally!!!"
-(let fib (fn (n) (cond ((< n 1) 0) ((= n 1) 1) (true (+ (fib (- n 1)) (fib (- n 2)))))) (fib 0))
-(let fib (fn (n) (cond ((< n 1) 0) ((= n 1) 1) (true (+ (fib (- n 1)) (fib (- n 2)))))) (fib 1))
-(let fib (fn (n) (cond ((< n 1) 0) ((= n 1) 1) (true (+ (fib (- n 1)) (fib (- n 2)))))) (fib 2))
-(let fib (fn (n) (cond ((< n 1) 0) ((= n 1) 1) (true (+ (fib (- n 1)) (fib (- n 2)))))) (fib 3))
-(let fib (fn (n) (cond ((< n 1) 0) ((= n 1) 1) (true (+ (fib (- n 1)) (fib (- n 2)))))) (fib 4))
-(let fib (fn (n) (cond ((< n 1) 0) ((= n 1) 1) (true (+ (fib (- n 1)) (fib (- n 2)))))) (fib 5))
-(let fib (fn (n) (cond ((< n 1) 0) ((= n 1) 1) (true (+ (fib (- n 1)) (fib (- n 2)))))) (fib 6))
-(let fib (fn (n) (cond ((< n 1) 0) ((= n 1) 1) (true (+ (fib (- n 1)) (fib (- n 2)))))) (fib 7))
-(let fib (fn (n) (cond ((< n 1) 0) ((= n 1) 1) (true (+ (fib (- n 1)) (fib (- n 2)))))) (fib 8))
-(let fib (fn (n) (cond ((< n 1) 0) ((= n 1) 1) (true (+ (fib (- n 1)) (fib (- n 2)))))) (fib 9))
-(let fib (fn (n) (cond ((< n 1) 0) ((= n 1) 1) (true (+ (fib (- n 1)) (fib (- n 2)))))) (fib 10))
-(let fib (fn (n) (cond ((< n 1) 0) ((= n 1) 1) (true (+ (fib (- n 1)) (fib (- n 2)))))) (fib 20))
-'"collatz conjecture"
-(let collatz (fn (x) (cond ((<= x 1) 1) ((= (mod x 2) 0) (collatz (/ x 2))) (true (collatz (+ (* x 3) 1))))) (collatz 0))
-(let collatz (fn (x) (cond ((<= x 1) 1) ((= (mod x 2) 0) (collatz (/ x 2))) (true (collatz (+ (* x 3) 1))))) (collatz 1))
-(let collatz (fn (x) (cond ((<= x 1) 1) ((= (mod x 2) 0) (collatz (/ x 2))) (true (collatz (+ (* x 3) 1))))) (collatz 2))
-(let collatz (fn (x) (cond ((<= x 1) 1) ((= (mod x 2) 0) (collatz (/ x 2))) (true (collatz (+ (* x 3) 1))))) (collatz 3))
-(let collatz (fn (x) (cond ((<= x 1) 1) ((= (mod x 2) 0) (collatz (/ x 2))) (true (collatz (+ (* x 3) 1))))) (collatz 4))
-(let collatz (fn (x) (cond ((<= x 1) 1) ((= (mod x 2) 0) (collatz (/ x 2))) (true (collatz (+ (* x 3) 1))))) (collatz 5))
-(let collatz (fn (x) (cond ((<= x 1) 1) ((= (mod x 2) 0) (collatz (/ x 2))) (true (collatz (+ (* x 3) 1))))) (collatz 6))
-(let collatz (fn (x) (cond ((<= x 1) 1) ((= (mod x 2) 0) (collatz (/ x 2))) (true (collatz (+ (* x 3) 1))))) (collatz 7))
-(let collatz (fn (x) (cond ((<= x 1) 1) ((= (mod x 2) 0) (collatz (/ x 2))) (true (collatz (+ (* x 3) 1))))) (collatz 8))
-(let collatz (fn (x) (cond ((<= x 1) 1) ((= (mod x 2) 0) (collatz (/ x 2))) (true (collatz (+ (* x 3) 1))))) (collatz 9))
-(let collatz (fn (x) (cond ((<= x 1) 1) ((= (mod x 2) 0) (collatz (/ x 2))) (true (collatz (+ (* x 3) 1))))) (collatz 10))
-(let collatz (fn (x) (cond ((<= x 1) 1) ((= (mod x 2) 0) (collatz (/ x 2))) (true (collatz (+ (* x 3) 1))))) (collatz 100))
-'"boolean functions"
-(and false false)
-(and false true)
-(and true false)
-(and true true)
-(and true nil)
-(and nil true)
-(and false nil)
-(and nil false)
-(or false false)
-(or false true)
-(or true false)
-(or true true)
-(or true nil)
-(or nil true)
-(or false nil)
-(or nil false)
-(not false)
-(not true)
-(neq "a" "a")
-(neq "a" "b")
-(neq false false)
-(neq false true)
-'"neq with symbols"
-(<> "a" "a")
-(<> "a" "b")
-(<> false false)
-(<> false true)
+'("x" . ("y" . ("z" . nil)));
+(cons "x" (cons "y" (cons "z" nil)));
+(cons "x" "y");
+(car (cdr '("x" "y" "z")));
+(car (cdr (cons "x" (cons "y" (cons "z" nil)))));
+'((("x" . "y") . "z") . nil);
+'(("x" . ("y" . "z")) . nil);
+nil;
+(cons "a" "b");
+(cons "a" '("b" . "c"));
+(car '("a" . "b"));
+(car "a");
+(cdr '("a" . "b"));
+(cdr "a");
+(eq "a" "b");
+(eq "a" "a");
+(atom '("a" . "b"));
+(atom "a");
+'( "a" . "b" );
+'("a" "b" "c");
+'("a" . ("b" . ("c" . nil)));
+'("HELLO" ("BRAVE" "NEW") "WORLD");
+'("HELLO" . (("BRAVE" . "NEW") . "WORLD"));
+'("a" ("b" "c" "d") ("e" "f"));
+'("a" . (("b" . ("c" . ("d" . nil))) . (("e" . ("f" . nil)) . nil)));
+'();
+'("a" . ());
+'(() . "a");
+'("A" "B" "C");
+'(("A" "B") "C");
+'("A" "B" ("C" "D"));
+'("A");
+'(("A"));
+'("A" ("B" . "C"));
+(let a "b" a);
+(let a '("b" . "c") (cons a a));
+(let a "b" (let c "d" (cons a c)));
+(let a "b");
+(let a "b" c "d");
+(let let a "b");
+(let true "a" true);
+(cond (true "a") (false "b") (false "c"));
+(cond (false "a") (true "b") (false "c"));
+(cond (false "a") (false "b") (true "c"));
+(let x (cond (true "a") (false "b") (false "c")) x);
+(let x "a" (let y "b" (cond (true x) (false y))));
+(let x "a" (let y "b" (cond (false x) (true y))));
+("a". nil);
+(nil. "a");
+'(nil. "a");
+'(nil "a");
+("a" let a "a" a);
+''(true false nil);
+'(quote . "a");
+'';
+'(a b c);
+'(a b . c);
+'(a . b);
+(let a "1" (let b a b));
+((fn (a) a) "1");
+(let id (fn (a) a) (id "1"));
+(let cons2 (fn (a b) (cons a b)) (cons2 "1" "2"));
+(let x '("a" "b" "c") x);
+(let x "a" (let x "b" x));
+(let x (cons "a" x) x);
+((fn (a) a) "1");
+(let id (fn (a) a) (id "1"));
+(let cons2 (fn (a b) (cons a b)) (cons2 "1" "2"));
+(;
+);
+(let x '("a" "b") (cond ((atom x) x) (true (cdr x))));
+((fn (x) (cond (true (cdr x)))) '("a" "b"));
+(let last (fn (x) (cond ((atom x) x) (true (cdr x)))) (last '("a" "b")));
+(let last (fn (x) (cond ((atom x) x) (true (last (cdr x))))) (last '("a" "b")));
+(let last (fn (x) (cond ((atom x) x) (true (last (cdr x))))) '("a" "b" "c" . "d"));
+(let last (fn (x) (cond ((atom x) x) (true (last (cdr x))))) (last '("a" "b" "c" . "d")));
+(let last (fn (x) (cond ((atom x) x) (true (last (cdr x))))) (last '("a" . "b")));
+'(1 2 3);
+(car '(1 2 3));
+'(?);
+'"basic math";
+(add 1 2);
+(add 200 -100);
+(add 10 4);
+(sub 1 2);
+(sub 200 -100);
+(sub 10 4);
+(mult 1 2);
+(mult 200 -100);
+(mult 10 4);
+(div 1 2);
+(div 200 -100);
+(div 10 4);
+(mod 1 2);
+(mod 200 -100);
+(mod 10 4);
+'"basic math with symbols";
+(+ 1 2);
+(+ 200 -100);
+(+ 10 4);
+(- 1 2);
+(- 200 -100);
+(- 10 4);
+(* 1 2);
+(* 200 -100);
+(* 10 4);
+(/ 1 2);
+(/ 200 -100);
+(/ 10 4);
+'"int comparisons";
+(lt 1 1);
+(lt 1 2);
+(lt 2 1);
+(leq 1 1);
+(leq 1 2);
+(leq 2 1);
+(gt 1 1);
+(gt 1 2);
+(gt 2 1);
+(geq 1 1);
+(geq 1 2);
+(geq 2 1);
+'"int comparisons with symbols";
+(< 1 1);
+(< 1 2);
+(< 2 1);
+(<= 1 1);
+(<= 1 2);
+(<= 2 1);
+(> 1 1);
+(> 1 2);
+(> 2 1);
+(>= 1 1);
+(>= 1 2);
+(>= 2 1);
+'"quoted math / comparison symbols";
+'(+ 0 0);
+'(- 0 0);
+'(* 0 0);
+'(/ 0 0);
+'(< 0 0);
+'(<= 0 0);
+'(> 0 0);
+'(>= 0 0);
+'"fibonacci function finally!!!";
+(let fib (fn (n) (cond ((< n 1) 0) ((= n 1) 1) (true (+ (fib (- n 1)) (fib (- n 2)))))) (fib 0));
+(let fib (fn (n) (cond ((< n 1) 0) ((= n 1) 1) (true (+ (fib (- n 1)) (fib (- n 2)))))) (fib 1));
+(let fib (fn (n) (cond ((< n 1) 0) ((= n 1) 1) (true (+ (fib (- n 1)) (fib (- n 2)))))) (fib 2));
+(let fib (fn (n) (cond ((< n 1) 0) ((= n 1) 1) (true (+ (fib (- n 1)) (fib (- n 2)))))) (fib 3));
+(let fib (fn (n) (cond ((< n 1) 0) ((= n 1) 1) (true (+ (fib (- n 1)) (fib (- n 2)))))) (fib 4));
+(let fib (fn (n) (cond ((< n 1) 0) ((= n 1) 1) (true (+ (fib (- n 1)) (fib (- n 2)))))) (fib 5));
+(let fib (fn (n) (cond ((< n 1) 0) ((= n 1) 1) (true (+ (fib (- n 1)) (fib (- n 2)))))) (fib 6));
+(let fib (fn (n) (cond ((< n 1) 0) ((= n 1) 1) (true (+ (fib (- n 1)) (fib (- n 2)))))) (fib 7));
+(let fib (fn (n) (cond ((< n 1) 0) ((= n 1) 1) (true (+ (fib (- n 1)) (fib (- n 2)))))) (fib 8));
+(let fib (fn (n) (cond ((< n 1) 0) ((= n 1) 1) (true (+ (fib (- n 1)) (fib (- n 2)))))) (fib 9));
+(let fib (fn (n) (cond ((< n 1) 0) ((= n 1) 1) (true (+ (fib (- n 1)) (fib (- n 2)))))) (fib 10));
+(let fib (fn (n) (cond ((< n 1) 0) ((= n 1) 1) (true (+ (fib (- n 1)) (fib (- n 2)))))) (fib 20));
+'"collatz conjecture";
+(let collatz (fn (x) (cond ((<= x 1) 1) ((= (mod x 2) 0) (collatz (/ x 2))) (true (collatz (+ (* x 3) 1))))) (collatz 0));
+(let collatz (fn (x) (cond ((<= x 1) 1) ((= (mod x 2) 0) (collatz (/ x 2))) (true (collatz (+ (* x 3) 1))))) (collatz 1));
+(let collatz (fn (x) (cond ((<= x 1) 1) ((= (mod x 2) 0) (collatz (/ x 2))) (true (collatz (+ (* x 3) 1))))) (collatz 2));
+(let collatz (fn (x) (cond ((<= x 1) 1) ((= (mod x 2) 0) (collatz (/ x 2))) (true (collatz (+ (* x 3) 1))))) (collatz 3));
+(let collatz (fn (x) (cond ((<= x 1) 1) ((= (mod x 2) 0) (collatz (/ x 2))) (true (collatz (+ (* x 3) 1))))) (collatz 4));
+(let collatz (fn (x) (cond ((<= x 1) 1) ((= (mod x 2) 0) (collatz (/ x 2))) (true (collatz (+ (* x 3) 1))))) (collatz 5));
+(let collatz (fn (x) (cond ((<= x 1) 1) ((= (mod x 2) 0) (collatz (/ x 2))) (true (collatz (+ (* x 3) 1))))) (collatz 6));
+(let collatz (fn (x) (cond ((<= x 1) 1) ((= (mod x 2) 0) (collatz (/ x 2))) (true (collatz (+ (* x 3) 1))))) (collatz 7));
+(let collatz (fn (x) (cond ((<= x 1) 1) ((= (mod x 2) 0) (collatz (/ x 2))) (true (collatz (+ (* x 3) 1))))) (collatz 8));
+(let collatz (fn (x) (cond ((<= x 1) 1) ((= (mod x 2) 0) (collatz (/ x 2))) (true (collatz (+ (* x 3) 1))))) (collatz 9));
+(let collatz (fn (x) (cond ((<= x 1) 1) ((= (mod x 2) 0) (collatz (/ x 2))) (true (collatz (+ (* x 3) 1))))) (collatz 10));
+(let collatz (fn (x) (cond ((<= x 1) 1) ((= (mod x 2) 0) (collatz (/ x 2))) (true (collatz (+ (* x 3) 1))))) (collatz 100));
+'"boolean functions";
+(and false false);
+(and false true);
+(and true false);
+(and true true);
+(and true nil);
+(and nil true);
+(and false nil);
+(and nil false);
+(or false false);
+(or false true);
+(or true false);
+(or true true);
+(or true nil);
+(or nil true);
+(or false nil);
+(or nil false);
+(not false);
+(not true);
+(neq "a" "a");
+(neq "a" "b");
+(neq false false);
+(neq false true);
+'"neq with symbols";
+(<> "a" "a");
+(<> "a" "b");
+(<> false false);
+(<> false true);
