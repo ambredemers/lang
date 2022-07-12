@@ -35,44 +35,44 @@ let rec lex_string (input : string) (start_position : int) (current_position : i
         | '\"' -> current_position
         | _ -> lex_string input start_position (current_position + 1)
 
-let rec lex_token (input : string) (position : int) : token_t list =
+let rec lex_token (input : string) (position : int) (indent : int) : token_t list =
     if position >= String.length input then
         []
     else
         match input.[position] with
-        | '(' -> Lparen :: lex_token input (position + 1)
-        | ')' -> Rparen :: lex_token input (position + 1)
-        | '.' -> Dot :: lex_token input (position + 1)
-        | '=' -> Id "eq" :: lex_token input (position + 1)
-        | '\'' -> Quote :: lex_token input (position + 1)
-        | '+' -> Id "add" :: lex_token input (position + 1)
+        | '(' -> Lparen :: lex_token input (position + 1) indent
+        | ')' -> Rparen :: lex_token input (position + 1) indent
+        | '.' -> Dot :: lex_token input (position + 1) indent
+        | '=' -> Id "eq" :: lex_token input (position + 1) indent
+        | '\'' -> Quote :: lex_token input (position + 1) indent
+        | '+' -> Id "add" :: lex_token input (position + 1) indent
         | '-' when not (is_digit input.[position + 1]) ->
-            Id "sub" :: lex_token input (position + 1)
-        | '*' -> Id "mult" :: lex_token input (position + 1)
-        | '/' -> Id "div" :: lex_token input (position + 1)
+            Id "sub" :: lex_token input (position + 1) indent
+        | '*' -> Id "mult" :: lex_token input (position + 1) indent
+        | '/' -> Id "div" :: lex_token input (position + 1) indent
         | '<' ->
             (match input.[position + 1] with
-            | '>' -> Id "neq" :: lex_token input (position + 2)
-            | '=' -> Id "leq" :: lex_token input (position + 2)
-            | _ -> Id "lt" :: lex_token input (position + 1))
+            | '>' -> Id "neq" :: lex_token input (position + 2) indent
+            | '=' -> Id "leq" :: lex_token input (position + 2) indent
+            | _ -> Id "lt" :: lex_token input (position + 1) indent)
         | '>' ->
             (match input.[position + 1] with
-            | '=' -> Id "geq" :: lex_token input (position + 2)
-            | _ -> Id "gt" :: lex_token input (position + 1))
-        | ' ' | '\t' | '\n' -> lex_token input (position + 1)
+            | '=' -> Id "geq" :: lex_token input (position + 2) indent
+            | _ -> Id "gt" :: lex_token input (position + 1) indent)
+        | ' ' | '\t' | '\n' -> lex_token input (position + 1) indent
         | c when is_digit c || c = '-' ->
             let positionp = position + 1 in
             let new_position = lex_int input positionp positionp in
             let value = int_of_string (String.sub input position (new_position - position)) in
-            Int value :: lex_token input new_position
+            Int value :: lex_token input new_position indent
         | c when is_alpha c || c = '_' ->
             let positionp = position + 1 in
             let new_position = lex_id input positionp positionp in
-            Id (String.sub input position (new_position - position)) :: lex_token input new_position
+            Id (String.sub input position (new_position - position)) :: lex_token input new_position indent
         | '\"' ->
             let positionp = position + 1 in
             let new_position = lex_string input positionp positionp in
-            String (String.sub input positionp (new_position - positionp)) :: lex_token input (new_position + 1)
+            String (String.sub input positionp (new_position - positionp)) :: lex_token input (new_position + 1) indent
         | c -> [Error ("Lexing error: lex_token \"" ^ Char.escaped c ^ "\"")]
 
-let lex (input : string) : token_t list = lex_token input 0
+let lex (input : string) : token_t list = lex_token input 0 0
