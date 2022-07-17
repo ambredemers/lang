@@ -6,9 +6,9 @@ let std : (string * Sexp_t.sexp_t) list =
         ("nil", Atom (Id "nil"));
         ("let", Error "attempted to use let as a variable");
         ("fn", Error "attempted to use fn as a variable");
-        ("cons", Error "attempted to use cons as a variable");
-        ("car", Error "attempted to use car as a variable");
-        ("cdr", Error "attempted to use cdr as a variable");
+        ("pair", Error "attempted to use pair as a variable");
+        ("left", Error "attempted to use left as a variable");
+        ("right", Error "attempted to use right as a variable");
         ("eq", Error "attempted to use eq as a variable");
         ("atom", Error "attempted to use atom as a variable");
         ("quote", Error "attempted to use quote as a variable");

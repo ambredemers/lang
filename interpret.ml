@@ -17,17 +17,17 @@ let rec apply (fn : sexp_t) (x : sexp_t) (env : env_t) : sexp_t =
     | Atom (Id i) ->
         (match i, x with
         | "true", _ | "false", _ | "nil", _ -> Error "interpret error: true, false, and nil are not functions"
-        | "car", Pair (Pair (l, _), Atom (Id "nil")) -> l
-        | "car", h -> Error ("interpret error: apply car invalid arg count" ^ pretty_string_of_sexp h)
-        | "cdr", Pair (Pair (_, r), Atom (Id "nil")) -> r
-        | "cdr", h -> Error ("interpret error: apply cdr invalid arg count: " ^ pretty_string_of_sexp h)
-        | "cons", Pair (l, Pair (r, Atom (Id "nil"))) -> Pair (l, r)
-        | "cons", h -> Error ("interpret error: apply cons invalid arg count" ^ pretty_string_of_sexp h)
+        | "left", Pair (Pair (l, _), Atom (Id "nil")) -> l
+        | "left", h -> Error ("interpret error: apply left invalid arg count" ^ pretty_string_of_sexp h)
+        | "right", Pair (Pair (_, r), Atom (Id "nil")) -> r
+        | "right", h -> Error ("interpret error: apply right invalid arg count: " ^ pretty_string_of_sexp h)
+        | "pair", Pair (l, Pair (r, Atom (Id "nil"))) -> Pair (l, r)
+        | "pair", h -> Error ("interpret error: apply pair invalid arg count" ^ pretty_string_of_sexp h)
         | "atom", Pair (a, Atom (Id "nil")) ->
             (match a with
             | Atom _ -> Atom (Id "true")
             | Pair _ -> Atom (Id "false")
-            | Error e -> Error ("interpret error: apply cdr arg was an error: " ^ e ^ ""))
+            | Error e -> Error ("interpret error: apply right arg was an error: " ^ e ^ ""))
         | "atom", h ->
             Error ("interpret error: apply atom invalid arg count: " ^ pretty_string_of_sexp h)
         | "eq", Pair (a, Pair (b, Atom (Id "nil"))) ->
