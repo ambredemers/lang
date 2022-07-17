@@ -1,8 +1,6 @@
 type token_t =
     | Lparen
     | Rparen
-    | Indent
-    | Dedent
     | Dot
     | Quote
     | Int of int
@@ -14,8 +12,6 @@ let string_of_token (token : token_t) : string =
     match token with
     | Lparen -> "Lparen"
     | Rparen -> "Rparen"
-    | Indent -> "Indent"
-    | Dedent -> "Dedent"
     | Dot -> "Dot"
     | Quote -> "Quote"
     | Int i -> "Int \"" ^ string_of_int i ^ "\""
