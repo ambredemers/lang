@@ -76,3 +76,56 @@ let rec lex_token (input : string) (position : int) (indent : int) : token_t lis
         | c -> [Error ("Lexing error: lex_token \"" ^ Char.escaped c ^ "\"")]
 
 let lex (input : string) : token_t list = lex_token input 0 0
+
+
+type lex2_t =
+    | Indent of token_t list
+    | Dedent of token_t list
+    | Tokens of token_t list
+    | Error of string
+
+let lex2_of_prelex (p : Prelex.prelex_t) : lex2_t =
+    match p with
+    | Indent s -> Indent (lex s)
+    | Dedent s -> Dedent (lex s)
+    | String s -> Tokens (lex s)
+    | Error e -> Error e
+
+let starts_w_indent (ls : lex2_t list) : bool =
+    match ls with
+    | Indent _ :: _ -> true
+    | _ -> false
+
+let starts_w_dedent (ls : lex2_t) : bool =
+    match ls with
+    | Dedent _ -> true
+    | _ -> false
+
+let apply_parens (l : lex2_t) (indent : bool) (dedent : bool) : token_t list =
+    match l with
+    | Indent s | Dedent s | Tokens s ->
+        (* start line *)
+        (match s with
+        | [] -> s
+        | Rparen :: [] -> s
+        | Rparen :: rest -> Rparen :: Lparen :: rest
+        | _ -> Lparen :: s) @
+        (* end line *)
+        (if indent then
+            []
+        else if dedent then
+            [Rparen; Rparen]
+        else
+            [Rparen;])
+    | Error e -> [Error e;]
+
+let rec imply_parens (l : lex2_t list) : token_t list list =
+    match l with
+    | [] -> []
+    | head :: rest ->
+        apply_parens head (starts_w_indent rest) (starts_w_dedent head) ::
+        imply_parens rest
+
+
+let lex2 (input : string) : token_t list =
+    List.flatten (imply_parens (List.map lex2_of_prelex (Prelex.prelex input)))

@@ -16,7 +16,7 @@ let () =
                 else
                     input := !input ^ "\n" ^ Stdlib.read_line ()    
             done) with Semicolon -> 
-                print_string (Sexp_t.pretty_string_of_sexp (Interpret.interpret (Parse.parse (Lex.lex !input))));
+                print_string (Sexp_t.pretty_string_of_sexp (Interpret.interpret (Parse.parse (Lex.lex2 !input))));
                 print_string "\n";
                 input := Stdlib.read_line ()
         done

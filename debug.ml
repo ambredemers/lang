@@ -16,7 +16,7 @@ let () =
                 else
                     input := !input ^ "\n" ^ Stdlib.read_line ()    
             done) with Semicolon -> 
-                let lex = Lex.lex !input in
+                let lex = Lex.lex2 !input in
                 print_string (Token_t.string_of_token_list lex);
                 print_string "\n";
                 print_string (Sexp_t.string_of_sexp (Parse.parse lex));
